@@ -1,6 +1,7 @@
 from enum import Enum
 from datetime import datetime, timedelta
 
+
 class SpotType(Enum):
     REGULAR = 'regular'
     COMPACT = 'compact'
@@ -24,6 +25,7 @@ class Vehicle:
     def __init__(self, license_no: str, vehicle_type: 'VehicleType'):
         self.license_no = license_no
         self.vehicle_type = vehicle_type
+        self.ticket = None
 
     def assign_ticket(self, ticket: 'ParkingTicket'):
         self.ticket = ticket
@@ -44,7 +46,7 @@ class Payment:
 
 
 class ParkingSpot:
-    def __init__(self, spot_id:str, spot_type: 'SpotType'):
+    def __init__(self, spot_id: str, spot_type: 'SpotType'):
         self.spot_id = spot_id
         self.spot_type = spot_type
         self.is_occupied = False
@@ -109,13 +111,9 @@ class Exit:
 class ParkingLot:
     def __init__(self, capacity: int):
         self.capacity = capacity
-        # Assume four types of parking spots are evenly allocated
-        self.spots = {
-            SpotType.HANDICAPPED: [ParkingSpot(f'{idx}', SpotType.HANDICAPPED) for idx in range(capacity//4)],
-            SpotType.COMPACT: [ParkingSpot(f'{idx}', SpotType.COMPACT) for idx in range(capacity//4)],
-            SpotType.REGULAR: [ParkingSpot(f'{idx}', SpotType.REGULAR) for idx in range(capacity//4)],
-            SpotType.LARGE: [ParkingSpot(f'{idx}', SpotType.LARGE) for idx in range(capacity//4)],
-        }
+        # Assume all types of parking spots are evenly allocated
+        self.spots = {type: [ParkingSpot(f'{idx}', type) for idx in range(capacity//len(SpotType))]
+                      for type in SpotType}
         self.entrance_points = []
         self.exit_points = []
         self.occupied_spots = 0
